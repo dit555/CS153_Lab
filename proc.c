@@ -287,6 +287,7 @@ wait(int *status)
       if(p->state == ZOMBIE){
         // Found one.
         pid = p->pid;
+	status = &p->exitStatus;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
