@@ -2,6 +2,7 @@
 #include "stat.h"
 #include "user.h"
 
+//test for WHNOHANG options
 int
 main(int argc, char *argv[])
 {
