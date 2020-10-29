@@ -19,7 +19,7 @@ main(int argc, char *argv[])
         if (pid_a[i] == 0)
         { // only the child executed this code
             printf(1, "\n The is child with PID# %d and I will exit with status %d\n", getpid(), getpid() + 4);
-            exitS(getpid() + 4);
+            exit(getpid() + 4);
         }
     }
 
@@ -44,5 +44,5 @@ main(int argc, char *argv[])
     ret_pid = waitpid(pid_a[4], &exit_status, 0);
     printf(1, "\n This is the partent: Child# %d has exited with status %d\n", ret_pid, exit_status);
 
-    return 0;
+    exit(0);
 }

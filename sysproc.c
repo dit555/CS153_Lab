@@ -36,11 +36,13 @@ int
 sys_waitpid(int pid, int *status, int options)
 {
   int p = pid;
-  int stat = argtr(0, (char**)&status, 2*sizeof(status));
+  int stat = argptr(0, (char**)&status, 2*sizeof(status));
   int o = options;
   argint(0, &p);
   argint(0, &o);
-  return waitpid(p, stat, o);
+  int pid2 = waitpid(p, &stat, o);
+  *status = stat;
+  return pid2;
 }
 
 int

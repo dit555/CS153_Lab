@@ -7,6 +7,8 @@
 #include "proc.h"
 #include "spinlock.h"
 
+#define WNOHANG 1
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -328,7 +330,7 @@ waitpid(int pid, int *status, int options)
       if(p->parent != curproc)
         continue;
       havekids = 1;
-      if(p->state == ZOMBIE && (p->pid == pid || pid == 0)){ //check if pid of exiting is the one we are looking for if 0 any pid is accepted
+      if(options ==0 &&p->state == ZOMBIE && (p->pid == pid || pid == 0)){ 
         // Found one.
         pidRet = p->pid;
 	status = &p->exitStatus;
@@ -342,6 +344,25 @@ waitpid(int pid, int *status, int options)
         p->state = UNUSED;
         release(&ptable.lock);
         return pidRet;
+      }
+
+      if(options == WNOHANG && p->pid == pid){ 
+        // Found one.
+        pidRet = p->pid;
+	status = &p->exitStatus;
+        kfree(p->kstack);
+        p->kstack = 0;
+        freevm(p->pgdir);
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        p->state = UNUSED;
+        release(&ptable.lock);
+        return pidRet;
+      }
+      else if (options == WNOHANG){
+	return -1;
       }
     }
 
