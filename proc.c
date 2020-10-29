@@ -246,7 +246,6 @@ exit(int status)
   iput(curproc->cwd);
   end_op();
   curproc->cwd = 0;
-  curproc->exitStatus = status;
   acquire(&ptable.lock);
 
   // Parent might be sleeping in wait(0).
@@ -263,6 +262,7 @@ exit(int status)
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
+  curproc->exitStatus = status;
   sched();
   panic("zombie exit");
 }
@@ -287,7 +287,7 @@ wait(int *status)
       if(p->state == ZOMBIE){
         // Found one.
         pid = p->pid;
-	status = &p->exitStatus;
+	*status = 5;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -297,6 +297,7 @@ wait(int *status)
         p->killed = 0;
         p->state = UNUSED;
         release(&ptable.lock);
+	*status = 6;
         return pid;
       }
     }
