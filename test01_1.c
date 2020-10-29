@@ -53,7 +53,6 @@ int exitWait(void)
         }
         else if (pid > 0)
         { // only the parent executes this code
-	    exit_status = 8;
             ret_pid = wait(&exit_status);
             printf(1, "\n This is the parent: child with PID# %d has exited with status %d\n", ret_pid, exit_status);
         }

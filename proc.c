@@ -231,6 +231,7 @@ exit(int status)
   struct proc *p;
   int fd;
 
+  curproc->exitStatus = status;  
   if(curproc == initproc)
     panic("init exiting");
 
@@ -262,7 +263,6 @@ exit(int status)
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
-  curproc->exitStatus = status;
   sched();
   panic("zombie exit");
 }
@@ -287,7 +287,7 @@ wait(int *status)
       if(p->state == ZOMBIE){
         // Found one.
         pid = p->pid;
-	*status = 5;
+	*status = p->exitStatus;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -297,11 +297,9 @@ wait(int *status)
         p->killed = 0;
         p->state = UNUSED;
         release(&ptable.lock);
-	*status = 6;
         return pid;
       }
     }
-
     // No point waiting if we don't have any children.
     if(!havekids || curproc->killed){
       release(&ptable.lock);

@@ -5,9 +5,9 @@
 int
 main(int argc, char *argv[])
 {
-  int pid;
-  int status = 7;
-  int pid2;
+  int pid, pid2;
+  int status;
+
   pid = fork();
   if (pid == 0){
 	printf(1, "exiting pid %d with 6\n", getpid());
