@@ -2,24 +2,39 @@
 #include "stat.h"
 #include "user.h"
 
+#define WNOHANG 1
+
 //test for WHNOHANG options
 int
 main(int argc, char *argv[])
 {
-  int pid, pid2;
-  int status;
+  printf(1, "\n  Part e) the waitpid option WNOHANG, test program CELEBW02 \n");
 
-  pid = fork();
-  if (pid == 0){
-	printf(1, "exiting pid %d with 6\n", getpid());
-	exit(6);
-  }
-  else if (pid > 0) {  
-  	pid2 = wait(&status);
-  	printf(1, "child %d exited with status: %d\n", pid2, status);
-  }
-  else{
-	printf(1, "fork failure\n");
-  }
-  exit(0);
+    int pid, retpid;
+    int status;
+
+    if ((pid = fork()) < 0)
+        printf(2, "fork() error");
+    else if (pid == 0)
+    {
+        sleep(5);
+        exit(1);
+    }
+    else
+        do
+        {
+            if ((retpid = waitpid(pid, &status, WNOHANG)) == -1)
+                printf(2, "wait() error");
+            else if (retpid == 0)
+            {
+                printf(1, "child is still running \n");
+                sleep(1);
+            }
+            else
+            {
+                printf(1, "child exited with status of %d\n", status);
+            }
+        } while (retpid == 0);
+
+    exit(0);
 }
