@@ -321,7 +321,6 @@ waitpid(int pid, int *status, int options)
   struct proc *p;
   int havekids, pidRet;
   struct proc *curproc = myproc();
-  
   acquire(&ptable.lock);
   for(;;){
     // Scan through table looking for exited children.
@@ -330,10 +329,10 @@ waitpid(int pid, int *status, int options)
       if(p->parent != curproc)
         continue;
       havekids = 1;
-      if(options ==0 &&p->state == ZOMBIE && (p->pid == pid || pid == 0)){ 
+      if(options == 0 && p->state == ZOMBIE && (p->pid == pid || pid == 0)){ 
         // Found one.
         pidRet = p->pid;
-	status = &p->exitStatus;
+	*status = p->exitStatus;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -346,10 +345,10 @@ waitpid(int pid, int *status, int options)
         return pidRet;
       }
 
-      if(options == WNOHANG && p->pid == pid){ 
+      if(options == 1 && p->pid == pid && p->state == ZOMBIE){ 
         // Found one.
         pidRet = p->pid;
-	status = &p->exitStatus;
+	*status = p->exitStatus;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -361,10 +360,14 @@ waitpid(int pid, int *status, int options)
         release(&ptable.lock);
         return pidRet;
       }
-      else if (options == WNOHANG){
-	return -1;
+      else if (options == 1 && p->pid == pid && p->state != ZOMBIE){
+	pidRet = 0;
+	return pidRet;
       }
-    }
+      else 
+	continue;
+  
+  }
 
     // No point waiting if we don't have any children.
     if(!havekids || curproc->killed){

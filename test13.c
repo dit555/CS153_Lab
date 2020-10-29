@@ -23,9 +23,9 @@ main(int argc, char *argv[])
     else
         do
         {
-            if ((retpid = waitpid(pid, &status, WNOHANG)) == -1)
-                printf(2, "wait() error");
-            else if (retpid == 0)
+            retpid = waitpid(pid, &status, WNOHANG);
+            
+            if (retpid == 0)
             {
                 printf(1, "child is still running \n");
                 sleep(1);
