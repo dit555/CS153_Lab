@@ -345,7 +345,7 @@ waitpid(int pid, int *status, int options)
         return pidRet;
       }
 
-      if(options == 1 && p->pid == pid && p->state == ZOMBIE){ 
+      if(options == WNOHANG  && p->pid == pid && p->state == ZOMBIE){ 
         // Found one.
         pidRet = p->pid;
 	*status = p->exitStatus;
@@ -360,10 +360,11 @@ waitpid(int pid, int *status, int options)
         release(&ptable.lock);
         return pidRet;
       }
-      else if (options == 1 && p->pid == pid && p->state != ZOMBIE){
-	pidRet = 0;
-	return pidRet;
+      else if (options == WNOHANG && p->pid == pid && p->state != ZOMBIE){
+        release(&ptable.lock);
+	return 0;
       }
+
       else 
 	continue;
   
