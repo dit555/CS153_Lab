@@ -1,3 +1,3 @@
 echo "making qemu..."
 make clean
-make qemu-nox-gdb
+make qemu-nox

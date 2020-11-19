@@ -289,7 +289,8 @@ wait(int *status)
       if(p->state == ZOMBIE){
         // Found one.
         pid = p->pid;
-	*status = p->exitStatus;
+	if (status != 0) //status is null
+		*status = p->exitStatus;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -326,13 +327,12 @@ waitpid(int pid, int *status, int options)
     // Scan through table looking for exited children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != curproc)
-        continue;
       havekids = 1;
-      if(options == 0 && p->state == ZOMBIE && (p->pid == pid || pid == 0)){ 
+      if(p->state == ZOMBIE && (p->pid == pid || pid == 0)){ 
         // Found one.
-        pidRet = p->pid;
-	*status = p->exitStatus;
+	pidRet = p->pid;
+	if (status != 0) //checks if status is null
+		*status = p->exitStatus;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -344,29 +344,10 @@ waitpid(int pid, int *status, int options)
         release(&ptable.lock);
         return pidRet;
       }
-
-      if(options == WNOHANG  && p->pid == pid && p->state == ZOMBIE){ 
-        // Found one.
-        pidRet = p->pid;
-	*status = p->exitStatus;
-        kfree(p->kstack);
-        p->kstack = 0;
-        freevm(p->pgdir);
-        p->pid = 0;
-        p->parent = 0;
-        p->name[0] = 0;
-        p->killed = 0;
-        p->state = UNUSED;
-        release(&ptable.lock);
-        return pidRet;
-      }
-      else if (options == WNOHANG && p->pid == pid && p->state != ZOMBIE){
+      else if (options == WNOHANG && p->pid == pid){
         release(&ptable.lock);
 	return 0;
       }
-
-      else 
-	continue;
   
   }
 
