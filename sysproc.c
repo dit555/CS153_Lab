@@ -45,6 +45,14 @@ sys_waitpid(void)
   return pid2;
 }
 
+void
+sys_setPriority(void)
+{
+  int prio;
+  argint(0, &prio);
+  setPriority(prio);
+}
+
 int
 sys_kill(void)
 {

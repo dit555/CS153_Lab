@@ -217,6 +217,7 @@ fork(void)
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
+  np->priority = 10; //default priority
 
   release(&ptable.lock);
 
@@ -362,6 +363,14 @@ waitpid(int pid, int *status, int options)
   }
 }
 
+
+//changes priority of curproc
+void
+ setPriority(int prio)
+{
+
+
+}
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
