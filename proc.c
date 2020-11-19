@@ -366,10 +366,14 @@ waitpid(int pid, int *status, int options)
 
 //changes priority of curproc
 void
- setPriority(int prio)
+setpriority(int prio)
 {
-
-
+	struct proc *curproc = myproc();
+        int p = prio;
+	//restrict priority to between 0 and 31
+	if (p < 0) p = 0;
+	if (p > 31) p = 31;
+	curproc->priority = prio; 
 }
 
 //PAGEBREAK: 42

@@ -46,11 +46,11 @@ sys_waitpid(void)
 }
 
 void
-sys_setPriority(void)
+sys_setpriority(void)
 {
   int prio;
   argint(0, &prio);
-  setPriority(prio);
+  setpriority(prio);
 }
 
 int
