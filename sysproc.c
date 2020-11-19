@@ -52,6 +52,11 @@ sys_setpriority(void)
   argint(0, &prio);
   setpriority(prio);
 }
+int
+sys_getpriority(void)
+{
+	return getpriority();
+}
 
 int
 sys_kill(void)

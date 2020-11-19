@@ -376,6 +376,13 @@ setpriority(int prio)
 	curproc->priority = prio; 
 }
 
+int
+getpriority(void)
+{
+	struct proc *curproc = myproc();
+	return curproc->priority;
+}
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
