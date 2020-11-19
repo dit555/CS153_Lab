@@ -89,6 +89,7 @@ allocproc(void)
 
 found:
   p->state = EMBRYO;
+  p->priority = 10;
   p->pid = nextpid++;
 
   release(&ptable.lock);
@@ -217,7 +218,6 @@ fork(void)
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
-  np->priority = 10; //default priority
 
   release(&ptable.lock);
 
