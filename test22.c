@@ -27,12 +27,12 @@ int PScheduler(void){
     printf(1, "\n  Step 2: 31 is the highest priority. All processes have a default priority of 10\n");
     printf(1, "\n  Step 2: The parent processes will switch to priority 31\n");
     setpriority(31);
-    for (i = 0; i <  4; i++) {
+    for (i = 0; i <  3; i++) {
 	pid = fork();
 	if (pid > 0 ) {
 		continue;}
 	else if ( pid == 0) {
-		setpriority(10+5*i);	
+		setpriority(10+10*i);	
 		for (j=0;j<50000;j++) {
 			for(k=0;k<1000;k++) {
 				asm("nop"); }}
@@ -46,7 +46,7 @@ int PScheduler(void){
 	}
 
 	if(pid > 0) {
-		for (i = 0; i <  4; i++) {
+		for (i = 0; i <  3; i++) {
 			wait(0);
 
 		}

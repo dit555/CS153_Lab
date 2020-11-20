@@ -8,6 +8,7 @@
 #include "spinlock.h"
 
 #define WNOHANG 1
+#define LAB2 1
 
 struct {
   struct spinlock lock;
@@ -415,12 +416,11 @@ scheduler(void)
 	for(temp = ptable.proc; temp < &ptable.proc[NPROC]; temp++){
 		if (temp->state != RUNNABLE)
 			continue;
-		/*
-		else if (max->state != RUNNABLE)
+		
+		if (temp->priority >= max->priority){
+			if(LAB2 && max->priority < 31) max->priority++; //Allows the toggeleing of this schedualing function
 			max = temp;
-		*/
-		if (temp->priority >= max->priority)
-			max = temp;
+		}
 
 
 	}     
@@ -432,6 +432,7 @@ scheduler(void)
       	c->proc = max;
       	switchuvm(max);
       	max->state = RUNNING;
+	if(LAB2 && max->priority > 0) max->priority--;
 
       	swtch(&(c->scheduler), max->context);
       	switchkvm();
