@@ -13,11 +13,11 @@ main(int argc, char *argv[])
 	printf(1, "priority of child is set to 20\n");
 	setpriority(20);
 	while(getpriority() > 15) asm("nop");
-	printf(1, "priority of child is: %d\n", getpriority());
+	printf(1, "priority of child is: %d after running for a bit\n", getpriority());
         exit(0);
   }
   wait(0);
-  printf(1, "parent runs\n", getpriority());
+  printf(1, "parent runs\n");
 
   exit(0);
 }
