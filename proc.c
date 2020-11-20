@@ -373,7 +373,7 @@ setpriority(int prio)
 	//restrict priority to between 0 and 31
 	if (p < 0) p = 0;
 	if (p > 31) p = 31;
-	curproc->priority = prio; 
+	curproc->priority = prio;
 }
 
 int
@@ -413,16 +413,18 @@ scheduler(void)
 	
 	max = ptable.proc;
 	for(temp = ptable.proc; temp < &ptable.proc[NPROC]; temp++){
-		if (max->state != RUNNABLE)
+		if (temp->state != RUNNABLE)
+			continue;
+		/*
+		else if (max->state != RUNNABLE)
 			max = temp;
-		else if (temp->priority > max->priority)
+		*/
+		if (temp->priority >= max->priority)
 			max = temp;
 
 
 	}     
 
-	if (max->state != RUNNABLE)
-		continue;
 
       	// Switch to chosen process.  It is the process's job
       	// to release ptable.lock and then reacquire it
