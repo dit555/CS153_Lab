@@ -91,6 +91,8 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->priority = 10;
+  p->arriveTime = 0;
+  p->lastTime = 0;
   p->pid = nextpid++;
 
   release(&ptable.lock);
@@ -401,6 +403,8 @@ scheduler(void)
   struct proc *temp;
   c->proc = 0;
   
+
+  int time = 0;
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -422,10 +426,14 @@ scheduler(void)
 			max = temp;
 		}
 
-
+		//assign times to task to cal turnaround time
+		if(temp->arriveTime == 0)
+			temp->arriveTime = time;
+		else
+			temp->lastTime = time;
 	}     
 
-
+	
       	// Switch to chosen process.  It is the process's job
       	// to release ptable.lock and then reacquire it
       	// before jumping back to us.
@@ -440,7 +448,7 @@ scheduler(void)
       	// Process is done running for now.
       	// It should have changed its p->state before coming back.
       	c->proc = 0;
-      
+        time++;
     }
     release(&ptable.lock);
 

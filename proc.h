@@ -50,7 +50,9 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   int exitStatus;	       // exit status
-  int priority;           // priority value of process, default 10
+  int priority;                // priority value of process, default 10
+  int arriveTime;	       //arival time to be assigned by schedauler
+  int lastTime;		       //last time proc went through schedauler
 };
 
 // Process memory is laid out contiguously, low addresses first:
