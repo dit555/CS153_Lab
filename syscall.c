@@ -106,6 +106,9 @@ extern int sys_uptime(void);
 extern int sys_waitpid(void);
 extern int sys_setpriority(void);
 extern int sys_getpriority(void);
+extern int sys_getarrivetime(void);
+extern int sys_getlasttime(void);
+extern int sys_turnaroundtime(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -132,6 +135,9 @@ static int (*syscalls[])(void) = {
 [SYS_waitpid] sys_waitpid,
 [SYS_setpriority] sys_setpriority,
 [SYS_getpriority] sys_getpriority,
+[SYS_getarrivetime] sys_getarrivetime,
+[SYS_getlasttime] sys_getlasttime,
+[SYS_turnaroundtime] sys_turnaroundtime,
 };
 
 void

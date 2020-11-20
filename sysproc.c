@@ -59,6 +59,30 @@ sys_getpriority(void)
 }
 
 int
+sys_getarrivetime(void)
+{
+	int pid;
+	argint(0, &pid);
+	return getarrivetime(pid);
+}
+
+int
+sys_getlasttime(void)
+{
+	int pid;
+	argint(0, &pid);
+	return getlasttime(pid);
+}
+
+int
+sys_turnaroundtime(void)
+{
+	int pid;
+	argint(0, &pid);
+	return turnaroundtime(pid);
+}
+
+int
 sys_kill(void)
 {
   int pid;

@@ -123,6 +123,9 @@ void            wakeup(void*);
 void            yield(void);
 void		setpriority(int prio);
 int 		getpriority(void);
+int		getarrivetime(int pid);
+int		getlasttime(int pid);
+int		turnaroundtime(int pid);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

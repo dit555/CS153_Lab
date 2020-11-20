@@ -26,6 +26,9 @@ int sleep(int);
 int uptime(void);
 void setpriority(int prio);
 int getpriority(void);
+int getarrivetime(int pid);
+int getlasttime(int pid);
+int turnaroundtime(int pid);
 
 // ulib.c
 int stat(const char*, struct stat*);

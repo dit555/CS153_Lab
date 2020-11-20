@@ -8,7 +8,7 @@
 #include "spinlock.h"
 
 #define WNOHANG 1
-#define LAB2 1
+#define LAB2 0
 
 struct {
   struct spinlock lock;
@@ -386,6 +386,55 @@ getpriority(void)
 	return curproc->priority;
 }
 
+int
+getarrivetime(int pid)
+{
+	struct proc *p;
+	int ar = 0;
+	acquire(&ptable.lock);
+	for (p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		if(p->pid == pid){
+			ar = p->arriveTime;
+			break;
+		}
+	}
+	release(&ptable.lock); 
+	return ar;
+}
+
+int
+getlasttime(int pid)
+{
+	struct proc *p;
+	int lt = 0;
+	acquire(&ptable.lock);
+	for (p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		if(p->pid == pid){
+			lt = p->lastTime;
+			break;
+		}
+	}
+	release(&ptable.lock); 
+	return lt;
+}
+
+int
+turnaroundtime(int pid)
+{
+	struct proc *p;
+	int ar = 0;
+	int lt = 0;
+	acquire(&ptable.lock);
+	for (p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		if(p->pid == pid){
+			ar = p->arriveTime;
+			lt = p->lastTime;
+			break;
+		}
+	}
+	release(&ptable.lock); 
+	return lt - ar; //turnaroundtime = exit - arrival time
+}
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -413,9 +462,9 @@ scheduler(void)
     acquire(&ptable.lock);
 
 
-
+    
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-	
+	time++;
 	max = ptable.proc;
 	for(temp = ptable.proc; temp < &ptable.proc[NPROC]; temp++){
 		if (temp->state != RUNNABLE)
@@ -425,13 +474,13 @@ scheduler(void)
 			if(LAB2 && max->priority < 31) max->priority++; //Allows the toggeleing of this schedualing function
 			max = temp;
 		}
-
+	}	
 		//assign times to task to cal turnaround time
-		if(temp->arriveTime == 0)
-			temp->arriveTime = time;
-		else
-			temp->lastTime = time;
-	}     
+	if(p->arriveTime == 0)
+		p->arriveTime = time;
+	else if (p->state != ZOMBIE)
+		p->lastTime = time;
+	     
 
 	
       	// Switch to chosen process.  It is the process's job
@@ -448,7 +497,7 @@ scheduler(void)
       	// Process is done running for now.
       	// It should have changed its p->state before coming back.
       	c->proc = 0;
-        time++;
+        
     }
     release(&ptable.lock);
 
