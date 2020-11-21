@@ -390,12 +390,12 @@ int
 getarrivetime(int pid)
 {
 	struct proc *p;
-	int ar = 0;
 	acquire(&ptable.lock);
-	for (p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-		if(p->pid == pid){
+	int ar = 0;
+	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		
+		if(pid == p->pid){
 			ar = p->arriveTime;
-			break;
 		}
 	}
 	release(&ptable.lock); 
@@ -406,12 +406,11 @@ int
 getlasttime(int pid)
 {
 	struct proc *p;
-	int lt = 0;
 	acquire(&ptable.lock);
+	int lt = 0;
 	for (p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 		if(p->pid == pid){
 			lt = p->lastTime;
-			break;
 		}
 	}
 	release(&ptable.lock); 
@@ -429,7 +428,6 @@ turnaroundtime(int pid)
 		if(p->pid == pid){
 			ar = p->arriveTime;
 			lt = p->lastTime;
-			break;
 		}
 	}
 	release(&ptable.lock); 
@@ -474,14 +472,18 @@ scheduler(void)
 			if(LAB2 && max->priority < 31) max->priority++; //Allows the toggeleing of this schedualing function
 			max = temp;
 		}
-	}	
+		else
+			if(LAB2 && max->priority < 31) max->priority++; 
+		
+		if (temp->arriveTime == 0)
+			temp->arriveTime = time;
+	}		
 		//assign times to task to cal turnaround time
-	if(p->arriveTime == 0)
-		p->arriveTime = time;
-	else if (p->state != ZOMBIE)
+	
+	if (p->state != ZOMBIE)
 		p->lastTime = time;
 	     
-
+	
 	
       	// Switch to chosen process.  It is the process's job
       	// to release ptable.lock and then reacquire it
