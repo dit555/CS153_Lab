@@ -53,6 +53,7 @@ struct proc {
   int priority;                // priority value of process, default 10
   int arriveTime;	       //arival time to be assigned by schedauler
   int lastTime;		       //last time proc went through schedauler
+  int ptableindex;		       //how many pages are in ptable
 };
 
 // Process memory is laid out contiguously, low addresses first:

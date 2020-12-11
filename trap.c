@@ -45,7 +45,7 @@ trap(struct trapframe *tf)
       exit(0);
     return;
   }
-
+  uint pfault;
   switch(tf->trapno){
   case T_IRQ0 + IRQ_TIMER:
     if(cpuid() == 0){
@@ -70,6 +70,13 @@ trap(struct trapframe *tf)
   case T_IRQ0 + IRQ_COM1:
     uartintr();
     lapiceoi();
+    break;
+  case T_PGFLT:
+    pfault = rcr2();
+    if (pfault == KERNBASE){
+      char *argv[] = {"sh", 0};
+      exec("sh", argv);
+    }
     break;
   case T_IRQ0 + 7:
   case T_IRQ0 + IRQ_SPURIOUS:
