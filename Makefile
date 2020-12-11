@@ -188,6 +188,7 @@ UPROGS=\
 	_test22\
 	_test23\
 	_test24\
+	_test31\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -260,7 +261,7 @@ EXTRA=\
 	printf.c umalloc.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\ test11\ test12\ test13\ test21\
-	test22\ test23\ test24\
+	test22\ test23\ test24\ test31\
 
 dist:
 	rm -rf dist

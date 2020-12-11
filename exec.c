@@ -69,7 +69,7 @@ exec(char *path, char **argv)
   curproc->ptableindex++;
   index = curproc->ptableindex;
   sz = PGROUNDUP(sz);
-  if((sp = allocuvm(pgdir, KERNBASE - index * PGSIZE, KERNBASE)) == 0){
+  if((sp = allocuvm(pgdir, KERNBASE - index * 2 * PGSIZE, KERNBASE)) == 0){
 	cprintf("allocuvm fail\n");
       goto bad;
   }

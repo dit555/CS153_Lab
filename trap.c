@@ -36,6 +36,8 @@ idtinit(void)
 void
 trap(struct trapframe *tf)
 {
+  uint pfault;
+
   if(tf->trapno == T_SYSCALL){
     if(myproc()->killed)
       exit(0);
@@ -45,7 +47,7 @@ trap(struct trapframe *tf)
       exit(0);
     return;
   }
-  uint pfault;
+
   switch(tf->trapno){
   case T_IRQ0 + IRQ_TIMER:
     if(cpuid() == 0){
@@ -71,20 +73,22 @@ trap(struct trapframe *tf)
     uartintr();
     lapiceoi();
     break;
-  case T_PGFLT:
-    pfault = rcr2();
-    if (pfault == KERNBASE){
-      char *argv[] = {"sh", 0};
-      exec("sh", argv);
-    }
-    break;
   case T_IRQ0 + 7:
   case T_IRQ0 + IRQ_SPURIOUS:
     cprintf("cpu%d: spurious interrupt at %x:%x\n",
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
-
+  case T_PGFLT:
+    pfault = rcr2();
+    pde_t *pgdir;
+    pgdir = 0;
+    if(pfault >  KERNBASE - 4 * PGSIZE ){
+      allocuvm(pgdir, KERNBASE - 4 * PGSIZE, KERNBASE - 2 * PGSIZE);
+      myproc()->ptableindex++;
+      cprintf("growing stack\n");
+      break;
+    }
   //PAGEBREAK: 13
   default:
     if(myproc() == 0 || (tf->cs&3) == 0){
