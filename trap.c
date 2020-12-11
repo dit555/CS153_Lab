@@ -81,14 +81,14 @@ trap(struct trapframe *tf)
     break;
   case T_PGFLT:
     pfault = rcr2();
-    pde_t *pgdir;
-    pgdir = 0;
-    if(pfault >  KERNBASE - 4 * PGSIZE ){
-      allocuvm(pgdir, KERNBASE - 4 * PGSIZE, KERNBASE - 2 * PGSIZE);
-      myproc()->ptableindex++;
-      cprintf("growing stack\n");
-      break;
-    }
+    int index;
+    index = myproc()->ptableindex * 2;
+    if(allocuvm(myproc()->pgdir, KERNBASE - index * PGSIZE, PGROUNDUP(pfault)) == 0)
+      cprintf("allocuvm failed\n");
+    myproc()->ptableindex++;
+    cprintf("expanding stack\n");
+    break;
+
   //PAGEBREAK: 13
   default:
     if(myproc() == 0 || (tf->cs&3) == 0){
